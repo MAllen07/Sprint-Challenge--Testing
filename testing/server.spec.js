@@ -1,128 +1,128 @@
-const request = require("supertest");
-const server = require("../server.js");
-const db = require("../dbConfig");
-const games = require("../server-model.js");
+const request = require('supertest');
+const server = require('../server.js');
+const db = require('../dbConfig');
+const games = require('../server-model');
 
-describe("The Server", () => {
-  //server is running -> pass
-  it("checks status code:200", () => {
-    return request(server)
-      .get("/")
-      .expect(200);
-  });
+describe('The Server', () => {
 
-  //hello message is running -> pass
-  it("checks server test  msg", () => {
-    const expected = { message: "Friday test!" };
+    //server is running -> pass
+    it('checks status code:200', () => {
+        return request(server).get('/').expect(200);
+    });
 
-    request(server)
-      .get("/")
-      .then(res => {
-        expect(res.body).toEqual(expected);
-      });
-  });
+    //hello message is running -> pass
+    it('checks server Friday msg', () => {
+        const expected = { message: 'Happy Friday!' };
+
+        request(server).get('/').then(res => {
+            expect(res.body).toEqual(expected)
+        });
+    });
+
 });
 
-describe("The Endpoints", () => {
-  //use beforeAll to run once. beforeEach to run always.
-  beforeEach(async () => {
-    await db("games").truncate();
-  });
+describe('The Endpoints', () => {
 
-  //GET endpoint
-  it("GET/games should return code:200", () => {
-    return request(server)
-      .get("/games")
-      .then(res => {
-        expect(res.status).toBe(200);
-      });
-  });
+    //use beforeAll to run once. beforeEach to run always.
+    beforeEach(async () => {
+        await db('games').truncate();
+    });
 
-  it("GET/games should return an array", () => {
-    const expected = [];
+    //GET endpoint
+    it('GET/games should return code:200', () => {
+        return request(server)
+            .get('/games')
+            .then(res => {
+                expect(res.status).toBe(200);
+            })
+    });
 
-    return request(server)
-      .get("/games")
-      .then(res => {
-        expect(expected).toEqual([]);
-      });
-  });
+    it('GET/games should return an array', () => {
+        const expected = [];
 
-  //beforeEach truncate will set this to 0.
-  it("GET/games should return an array with length 0", () => {
-    const expected = [];
+        return request(server)
+            .get('/games')
+            .then(res => {
+                expect(expected).toEqual([])
+            });
+    });
 
-    return request(server)
-      .get("/games")
-      .then(res => {
-        expect(expected).toHaveLength(0);
-      });
-  });
+    //beforeEach truncate will set this to 0.
+    it('GET/games should return an array with length 0', () => {
+        const expected = [];
 
-  it("GET/games should return Content-Type application or json", () => {
-    return request(server)
-      .get("/games")
-      .expect("Content-Type", /application/ || /json/);
-  });
+        return request(server)
+            .get('/games')
+            .then(res => {
+                expect(expected).toHaveLength(0)
+            });
+    });
 
-  //Get:ID Endpoint
-  it("GET/games:id should return code:200", async () => {
-    await request(server)
-      .post("/games")
-      .send({ title: "Nioh", genre: "RPG", release: "2017" });
+    it('GET/games should return Content-Type application or json', () => {
+        return request(server)
+            .get('/games')
+            .expect('Content-Type', /application/ || /json/)
+    });
 
-    const expected = await request(server).get("/games/1");
-    expect(expected.status).toBe(200);
-  });
+    //Get:ID Endpoint
+    it('GET/games:id should return code:200', async () => {
+        await request(server).post('/games')
+            .send({ title: 'Nioh', genre: 'RPG', release: '2017' })
 
-  it("GET/games:id should return code:404", async () => {
-    await request(server)
-      .post("/games")
-      .send({ title: "Nioh", genre: "RPG", release: "2017" });
+        const expected = await request(server).get('/games/1');
+        expect(expected.status).toBe(200);
+    })
 
-    const expected = await request(server).get("/games/2");
-    expect(expected.status).toBe(404);
-  });
+    it('GET/games:id should return code:404', async () => {
+        await request(server).post('/games')
+            .send({ title: 'Nioh', genre: 'RPG', release: '2017' })
 
-  //POST Endpoint
-  it("POST/games should return code:201", () => {
-    return request(server)
-      .post("/games")
-      .send({ title: "Nioh", genre: "RPG" })
-      .then(res => {
-        expect(res.status).toBe(201);
-      });
-  });
+        const expected = await request(server).get('/games/2');
+        expect(expected.status).toBe(404);
+    })
 
-  //isnt working
-  it("POST/games should return an array with length of 1", async () => {
-    // return request(server)
-    // .post('/games')
-    // .send({ title: 'Nioh', genre: 'RPG' })
-    // .then(res => {
-    //     expect(res.status).toBe(201);
-    //     expect(res.body).toHaveLength([1])
-    // })
 
-    await games.add({ title: "Nioh", genre: "RPG" });
+    //POST Endpoint
+    it('POST/games should return code:201', () => {
+        return request(server)
+            .post('/games')
+            .send({ title: 'Nioh', genre: 'RPG' })
+            .then(res => {
+                expect(res.status).toBe(201);
+            });
+    });
 
-    const newGame = await db("games");
-    expect(newGame).toHaveLength(1);
-  });
+    //isnt working
+    it('POST/games should return an array with length of 1', async () => {
 
-  it("POST/games should return code:422 if entry is incomplete", () => {
-    return request(server)
-      .post("/games")
-      .send({ title: "Everquest", genre: null })
-      .then(res => {
-        expect(res.status).toBe(422);
-      });
-  });
+        // return request(server)
+        // .post('/games')
+        // .send({ title: 'Nioh', genre: 'RPG' })
+        // .then(res => {
+        //     expect(res.status).toBe(201);
+        //     expect(res.body).toHaveLength([1])
+        // })
 
-  it("POST/games should return Content-Type json", () => {
-    return request(server)
-      .post("/games")
-      .send({ title: "Warcraft", genre: "RTS" })
-      .expect("Content-Type", /json/);
-  });
+        await games.add({ title: 'Nioh', genre: 'RPG' })
+
+        const newGame = await db('games');
+        expect(newGame).toHaveLength(1)
+
+    });
+
+    it('POST/games should return code:422 if entry is incomplete', () => {
+        return request(server)
+            .post('/games')
+            .send({ title: 'Everquest', genre: null })
+            .then(res => {
+                expect(res.status).toBe(422)
+            });
+    });
+
+    it('POST/games should return Content-Type json', () => {
+        return request(server)
+            .post('/games')
+            .send({ title: 'Warcraft', genre: 'RTS' })
+            .expect('Content-Type', /json/)
+    });
 });
