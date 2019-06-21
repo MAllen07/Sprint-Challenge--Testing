@@ -1,7 +1,7 @@
 const request = require('supertest');
 const server = require('../server.js');
 const db = require('../data/dbConfig.js');
-const games = require('../server-model.js');
+
 
 describe('The Server', () => {
 
